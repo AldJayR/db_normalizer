@@ -1,19 +1,21 @@
-import Fastify from 'fastify';
 import cors from '@fastify/cors';
-import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
+import dotenv from 'dotenv';
+import Fastify from 'fastify';
 
 dotenv.config();
 
 const fastify = Fastify({
-  logger: true
+  logger: true,
 });
 
 // Register CORS
-const allowedOrigins = process.env.CORS_ORIGIN?.split(',').map(o => o.trim()) || ['http://localhost:5173'];
+const allowedOrigins = process.env.CORS_ORIGIN?.split(',').map((o) =>
+  o.trim(),
+) || ['http://localhost:5173'];
 await fastify.register(cors, {
   origin: allowedOrigins,
-  credentials: true
+  credentials: true,
 });
 
 const apiKey = process.env.GEMINI_API_KEY;
@@ -30,39 +32,41 @@ interface NormalizeRequestBody {
 }
 
 // Health check route
-fastify.get('/', async (request, reply) => {
+fastify.get('/', async (_request, _reply) => {
   return { status: 'ok', message: 'Database Normalization API is running' };
 });
 
 // Normalization route
-fastify.post<{ Body: NormalizeRequestBody }>('/api/normalize', async (request, reply) => {
-  try {
-    const { attributes, businessRules } = request.body;
+fastify.post<{ Body: NormalizeRequestBody }>(
+  '/api/normalize',
+  async (request, reply) => {
+    try {
+      const { attributes, businessRules } = request.body;
 
-    if (!attributes || !attributes.trim()) {
-      return reply.code(400).send({
-        error: 'Attributes are required'
-      });
-    }
+      if (!attributes || !attributes.trim()) {
+        return reply.code(400).send({
+          error: 'Attributes are required',
+        });
+      }
 
-    // Input validation
-    if (attributes.length > 5000) {
-      return reply.code(400).send({
-        error: 'Attributes input too long (max 5000 characters)'
-      });
-    }
+      // Input validation
+      if (attributes.length > 5000) {
+        return reply.code(400).send({
+          error: 'Attributes input too long (max 5000 characters)',
+        });
+      }
 
-    if (businessRules && businessRules.length > 10000) {
-      return reply.code(400).send({
-        error: 'Business rules input too long (max 10000 characters)'
-      });
-    }
+      if (businessRules && businessRules.length > 10000) {
+        return reply.code(400).send({
+          error: 'Business rules input too long (max 10000 characters)',
+        });
+      }
 
-    const prompt = `You are a database normalization expert. Given the following attributes and optional business rules, perform complete database normalization.
+      const prompt = `You are a database normalization expert. Given the following attributes and optional business rules, perform complete database normalization.
 
 ATTRIBUTES: ${attributes}
 
-${businessRules && businessRules.trim() ? `BUSINESS RULES:\n${businessRules}` : 'BUSINESS RULES: None provided - infer realistic business rules based on the attributes'}
+${businessRules?.trim() ? `BUSINESS RULES:\n${businessRules}` : 'BUSINESS RULES: None provided - infer realistic business rules based on the attributes'}
 
 Perform the following steps:
 1. If no business rules provided, generate realistic business rules based on the attribute names
@@ -118,49 +122,51 @@ Respond ONLY with a valid JSON object (no markdown, no code blocks, no preamble)
   }
 }`;
 
-    fastify.log.info('Sending request to Gemini API...');
-    
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
-        temperature: 0.7,
-        topP: 0.8,
-        topK: 40,
-      }
-    });
+      fastify.log.info('Sending request to Gemini API...');
 
-    const text = response.text;
-    
-    // Clean the response
-    let cleaned = text?.trim() || '';
-    cleaned = cleaned.replace(/```json\s*/g, '');
-    cleaned = cleaned.replace(/```\s*/g, '');
-    cleaned = cleaned.trim();
-    
-    const parsed = JSON.parse(cleaned);
-    
-    fastify.log.info('Successfully normalized database');
-    return parsed;
-    
-  } catch (error: any) {
-    fastify.log.error(error);
-    
-    return reply.code(500).send({
-      error: 'Normalization failed',
-      message: error.message || 'Unknown error occurred'
-    });
-  }
-});
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: prompt,
+        config: {
+          temperature: 0.7,
+          topP: 0.8,
+          topK: 40,
+        },
+      });
+
+      const text = response.text;
+
+      // Clean the response
+      let cleaned = text?.trim() || '';
+      cleaned = cleaned.replace(/```json\s*/g, '');
+      cleaned = cleaned.replace(/```\s*/g, '');
+      cleaned = cleaned.trim();
+
+      const parsed = JSON.parse(cleaned);
+
+      fastify.log.info('Successfully normalized database');
+      return parsed;
+    } catch (error: unknown) {
+      fastify.log.error(error);
+
+      const message =
+        error instanceof Error ? error.message : 'Unknown error occurred';
+      return reply.code(500).send({
+        error: 'Normalization failed',
+        message,
+      });
+    }
+  },
+);
 
 // Start server
 const start = async () => {
   try {
     const PORT = Number(process.env.PORT) || 3001;
     const HOST = process.env.HOST || 'localhost';
-    
+
     await fastify.listen({ port: PORT, host: HOST });
-    
+
     console.log(`
 ╔════════════════════════════════════════════════════╗
 ║   🚀 Database Normalization API Server            ║

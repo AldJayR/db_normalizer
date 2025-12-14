@@ -1,7 +1,7 @@
 import type { NormalizationResult } from '../types';
 import { BusinessRules } from './BusinessRules';
-import { FunctionalDependencies } from './FunctionalDependencies';
 import { CandidateKeys } from './CandidateKeys';
+import { FunctionalDependencies } from './FunctionalDependencies';
 import { NormalizationStep } from './NormalizationStep';
 import { Verification } from './Verification';
 

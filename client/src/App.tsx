@@ -1,9 +1,9 @@
-import { useState } from 'react'
-import type { NormalizationResult } from './types';
-import { Header } from './components/Header';
+import { useState } from 'react';
 import { ErrorMessage } from './components/ErrorMessage';
+import { Header } from './components/Header';
 import { InputForm } from './components/InputForm';
 import { ResultsDisplay } from './components/ResultsDisplay';
+import type { NormalizationResult } from './types';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
@@ -32,8 +32,8 @@ function App() {
         },
         body: JSON.stringify({
           attributes,
-          businessRules
-        })
+          businessRules,
+        }),
       });
 
       if (!response.ok) {
@@ -46,7 +46,10 @@ function App() {
       setStep('results');
     } catch (err: unknown) {
       console.error('Error:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Failed to process normalization. Please check your input and try again.';
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : 'Failed to process normalization. Please check your input and try again.';
       setError(errorMessage);
     } finally {
       setIsProcessing(false);
@@ -62,7 +65,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 md:p-8">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 p-4 md:p-8">
       <div className="max-w-5xl mx-auto">
         <div className="bg-white rounded-lg shadow-xl p-4 md:p-8">
           <Header />
