@@ -62,14 +62,29 @@ Visit http://localhost:5173
 ## Production Build
 
 ### Backend
+
+**Option 1: Using build script**
 ```bash
 cd server
-pnpm install --prod
+chmod +x build.sh
+./build.sh
+pnpm start
+```
+
+**Option 2: Manual build**
+```bash
+cd server
+pnpm install --no-frozen-lockfile
 pnpm run build
 pnpm start
 ```
 
 The server will compile TypeScript to `dist/` and run the production build.
+
+**For Render/Railway/other platforms:** Set build command to:
+```bash
+cd server && pnpm install --no-frozen-lockfile && pnpm run build
+```
 
 ### Frontend
 ```bash
