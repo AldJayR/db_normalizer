@@ -4,11 +4,14 @@ interface FunctionalDependenciesProps {
   dependencies: FunctionalDependency[];
 }
 
-export function FunctionalDependencies({ dependencies }: FunctionalDependenciesProps) {
+export function FunctionalDependencies({
+  dependencies,
+}: FunctionalDependenciesProps) {
   return (
     <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
       <h3 className="font-semibold text-purple-900 mb-2 flex items-center gap-2">
-        <span className="text-lg">🔗</span> Functional Dependencies ({dependencies.length})
+        <span className="text-lg">🔗</span> Functional Dependencies (
+        {dependencies.length})
       </h3>
       <div className="space-y-2">
         {dependencies.map((fd, i) => (

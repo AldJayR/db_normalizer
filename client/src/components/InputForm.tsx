@@ -17,7 +17,7 @@ export function InputForm({
   setBusinessRules,
   processNormalization,
   isProcessing,
-  setError
+  setError,
 }: InputFormProps) {
   return (
     <div className="space-y-6">
@@ -51,14 +51,15 @@ Or use FD notation: StudentID -> StudentName"
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent h-32"
         />
         <p className="text-sm text-gray-500 mt-2">
-          Leave empty to let AI infer realistic business rules from attribute names
+          Leave empty to let AI infer realistic business rules from attribute
+          names
         </p>
       </div>
 
       <button
         onClick={processNormalization}
         disabled={!attributes.trim() || isProcessing}
-        className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed transition flex items-center justify-center gap-2"
+        className="w-full bg-linear-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed transition flex items-center justify-center gap-2"
       >
         {isProcessing ? (
           <>
