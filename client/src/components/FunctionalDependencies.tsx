@@ -1,3 +1,4 @@
+import { ArrowRightLeft } from 'lucide-react';
 import type { FunctionalDependency } from '../types';
 
 interface FunctionalDependenciesProps {
@@ -6,17 +7,23 @@ interface FunctionalDependenciesProps {
 
 export function FunctionalDependencies({ dependencies }: FunctionalDependenciesProps) {
   return (
-    <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-      <h3 className="font-semibold text-purple-900 mb-2 flex items-center gap-2">
-        <span className="text-lg">🔗</span> Functional Dependencies ({dependencies.length})
+    <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col h-full">
+      <h3 className="text-sm font-semibold text-slate-800 mb-4 flex items-center gap-2 uppercase tracking-wide">
+        <ArrowRightLeft className="w-4 h-4 text-indigo-600" /> 
+        Dependencies
+        <span className="bg-slate-100 text-slate-600 py-0.5 px-2.5 rounded-full text-xs ml-auto font-medium">
+          {dependencies.length} found
+        </span>
       </h3>
-      <div className="space-y-2">
+      <div className="space-y-3 max-h-[220px] overflow-y-auto pr-2 custom-scrollbar flex-1">
         {dependencies.map((fd, i) => (
-          <div key={i} className="bg-white rounded p-2">
-            <div className="font-mono text-purple-800 font-semibold">
-              {fd.left.join(', ')} → {fd.right.join(', ')}
+          <div key={i} className="bg-slate-50 border border-slate-100 rounded-lg p-3 transition-colors hover:bg-slate-100">
+            <div className="font-mono text-sm text-indigo-900 font-semibold flex items-center flex-wrap gap-2">
+              <span>{fd.left.join(', ')}</span>
+              <span className="text-slate-400">→</span>
+              <span>{fd.right.join(', ')}</span>
             </div>
-            <div className="text-sm text-purple-600 mt-1">{fd.explanation}</div>
+            <div className="text-xs text-slate-500 mt-2 leading-relaxed">{fd.explanation}</div>
           </div>
         ))}
       </div>

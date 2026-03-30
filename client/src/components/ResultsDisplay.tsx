@@ -7,28 +7,37 @@ import { Verification } from './Verification';
 
 interface ResultsDisplayProps {
   results: NormalizationResult;
-  resetSystem: () => void;
 }
 
-export function ResultsDisplay({ results, resetSystem }: ResultsDisplayProps) {
+export function ResultsDisplay({ results }: ResultsDisplayProps) {
   return (
-    <div className="space-y-6">
-      <BusinessRules rules={results.businessRules} />
-      <FunctionalDependencies dependencies={results.functionalDependencies} />
-      <CandidateKeys keys={results.candidateKeys} />
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
+      
+      {/* Top Summary Row */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <CandidateKeys keys={results.candidateKeys} />
+        <FunctionalDependencies dependencies={results.functionalDependencies} />
+      </div>
 
-      {['1NF', '2NF', '3NF'].map((nf) => (
-        <NormalizationStep key={nf} nf={nf} data={results.normalization[nf]} />
-      ))}
+      {results.businessRules && results.businessRules.length > 0 && (
+        <BusinessRules rules={results.businessRules} />
+      )}
 
-      <Verification data={results.verification} />
+      {/* Normalization Steps */}
+      <div className="space-y-5 pt-4">
+        <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2 border-b border-slate-200 pb-3">
+          Normalization Steps
+        </h2>
+        <div className="space-y-6">
+          {['1NF', '2NF', '3NF'].map((nf) => (
+            <NormalizationStep key={nf} nf={nf} data={results.normalization[nf]} />
+          ))}
+        </div>
+      </div>
 
-      <button
-        onClick={resetSystem}
-        className="w-full bg-gray-600 text-white py-3 rounded-lg font-semibold hover:bg-gray-700 transition"
-      >
-        Start New Normalization
-      </button>
+      <div className="pt-4">
+        <Verification data={results.verification} />
+      </div>
     </div>
   );
 }
