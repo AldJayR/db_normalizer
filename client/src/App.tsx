@@ -37,8 +37,22 @@ function App() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to normalize');
+        let errorMessage = 'Failed to normalize';
+        const contentType = response.headers.get('content-type') || '';
+
+        if (contentType.includes('application/json')) {
+          const errorData = await response.json();
+          if (errorData && typeof errorData.message === 'string' && errorData.message.trim()) {
+            errorMessage = errorData.message;
+          }
+        } else {
+          const text = await response.text();
+          if (text.trim()) {
+            errorMessage = text.trim();
+          }
+        }
+
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();

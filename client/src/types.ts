@@ -42,6 +42,11 @@ export interface VerificationData {
   warnings?: string[];
 }
 
+export interface NormalizationMeta {
+  inferredBusinessRules: boolean;
+  warnings?: string[];
+}
+
 export interface NormalizationResult {
   businessRules: string[];
   functionalDependencies: FunctionalDependency[];
@@ -53,4 +58,5 @@ export interface NormalizationResult {
     [key: string]: NormalizationStepData;
   };
   verification: VerificationData;
+  meta?: NormalizationMeta;
 }
